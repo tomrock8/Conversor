@@ -2,24 +2,32 @@ package com.converter.agc.converter;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.View;
 import android.view.Menu;
 import android.view.MenuItem;
+
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
 
 
 /*
     Ampliacion:
+        - Binario coma fija.
         - Operador logica. Suma binaria, Resta Binaria.
         - Mejoras visuales
  */
 public class MainActivity extends AppCompatActivity {
 
-    private Button calcular;
-    private EditText datoBIN;
+    private Button btn0;
+    private Button btn1;
+    private Button btnDel;
+
+    private Button sumar;
+    private Button restar;
+    private TextView datoBIN;
     private TextView resultadoDec;
     private TextView resultadoOct;
     private TextView resultadoHex;
@@ -28,30 +36,85 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        calcular = (Button) findViewById(R.id.button1);
-        calcular.setOnClickListener(new View.OnClickListener() {
+        btn0 = (Button) findViewById(R.id.btn0);
+        btn1 = (Button) findViewById(R.id.btn1);
+        btnDel = (Button) findViewById(R.id.btnDel);
+
+        sumar = (Button) findViewById(R.id.btnSuma);
+        restar = (Button) findViewById(R.id.btnResta);
+
+        datoBIN = (TextView) findViewById(R.id.editText1);
+        resultadoDec = (TextView) findViewById(R.id.resultadoDecimal);
+        resultadoOct = (TextView) findViewById(R.id.resultadoOctal);
+        resultadoHex = (TextView) findViewById(R.id.resultadoHexadecimal);
+
+
+        btn0.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                datoBIN.setText(datoBIN.getText().toString() + "0");
+            }
+        });
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                datoBIN.setText(datoBIN.getText().toString() + "1");
+            }
+        });
+
+        btnDel.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                String txt = datoBIN.getText().toString();
+                if (txt.length() > 0)
+                    datoBIN.setText(txt.substring(0, txt.length() - 1));
+            }
+        });
+
+
+        sumar.setOnClickListener(new View.OnClickListener() {
 
             @Override
             public void onClick(View v) {
                 // TODO Auto-generated method stub
-                datoBIN = (EditText) findViewById(R.id.editText1);
-                resultadoDec = (TextView) findViewById(R.id.resultadoDecimal);
-                resultadoOct = (TextView) findViewById(R.id.resultadoOctal);
-                resultadoHex = (TextView) findViewById(R.id.resultadoHexadecimal);
+            }
+        });
+
+        datoBIN.setSelected(true);
+        datoBIN.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
                 String decimal = convertirADecimal();
-                if(decimal.contains("ERROR")) {
+                if (decimal.contains("ERROR")) {
                     resultadoDec.setText("Decimal: " + decimal);
                     resultadoOct.setText("Octal: " + decimal);
                     resultadoHex.setText("Hexadecimal: " + decimal);
-                }
-                else{
+                } else {
+
+                    String Octal = Integer.toOctalString(Integer.parseInt(convertirADecimal()));
+                    String Hexadecial = Integer.toHexString(Integer.parseInt(convertirADecimal())).toUpperCase();
                     resultadoDec.setText("Decimal: " + decimal);
-                    resultadoOct.setText("Octal: " + Integer.toOctalString(Integer.parseInt(convertirADecimal())));
-                    resultadoHex.setText("Hexadecimal: " + Integer.toHexString(Integer.parseInt(convertirADecimal())).toUpperCase());
+                    resultadoOct.setText("Octal: " + Octal);
+                    resultadoHex.setText("Hexadecimal: " + Hexadecial);
 
                 }
             }
         });
+
+
     }
 
     private String convertirADecimal() {
